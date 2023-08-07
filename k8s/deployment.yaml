@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goserver
+  labels:
+    app: goserver
+    project: "k8s"
+spec:
+  selector:
+    matchLabels:
+      app: goserver
+  replicas: 2
+  template:
+    metadata:  
+      labels:
+        app: "goserver"
+        project: "k8s"
+    spec:
+      containers:
+        - name: goserver
+          image: "carlosdiegodev/hello-go:v6"
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - mountPath: "/go/myfamily"
+              name: config #Montei o volume declarado abaixo aqui...  
+          
+      volumes:
+        - name: config
+          configMap:
+            name: configmap-family
+            items:
+            - key: members
+              path: "family.txt"
+          
+
